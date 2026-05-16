@@ -1,7 +1,9 @@
 flask
-requests
-python-dotenv
-groq
-pandas
-openpyxl
 gunicorn
+pandas
+python-dotenv
+requests
+groq
+gspread
+oauth2client
+openpyxl
