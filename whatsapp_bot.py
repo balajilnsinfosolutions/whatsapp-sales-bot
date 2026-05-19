@@ -250,6 +250,17 @@ Your behavior:
 - Use bullet points properly
 - Continue same conversation topic
 - Ask customer name first
+- Never send multiple replies for one user message
+- Reply only once per customer message
+- Do not send follow-up messages unless customer replies
+- Do not repeat greetings
+- Avoid repetitive responses
+- If already answered, wait for customer response
+- If user says hi/hello multiple times, greet only once naturally
+- Never assume greetings are customer names
+- Only save real human names
+- Ignore typos, greetings, or random words as names
+- Keep conversation human-like and professional
 Current Customer Data:
 
 Name: {user_data.get("name")}
@@ -437,11 +448,6 @@ def handle_whatsapp_message(sender_number, user_message):
     # =====================================
 
     user_data = users[user_id]
-    # =====================================
-    # RESET BOT LOCK
-    # =====================================
-
-    user_data["last_bot_reply"] = False
 
     # =====================================
     # GREETING WORDS
@@ -922,6 +928,41 @@ def webhook():
         if "messages" in value:
 
             message = value["messages"][0]
+            # =====================================
+            # USER WHATSAPP NUMBER
+            # =====================================
+
+            sender_number = message["from"]
+
+            # =====================================
+            # UNIQUE MESSAGE ID
+            # =====================================
+
+            message_id = message.get("id")
+
+            # =====================================
+            # CREATE USER MEMORY IF NOT EXISTS
+            # =====================================
+
+            if sender_number not in users:
+
+                users[sender_number] = {}
+
+            # =====================================
+            # PREVENT DUPLICATE REPLIES
+            # =====================================
+
+            if users[sender_number].get("last_message_id") == message_id:
+
+                print("Duplicate message ignored")
+
+                return "duplicate", 200
+
+            # =====================================
+            # SAVE LAST MESSAGE ID
+            # =====================================
+
+            users[sender_number]["last_message_id"] = message_id
 
             # =====================================
             # USER MESSAGE
@@ -935,9 +976,7 @@ def webhook():
             # USER WHATSAPP NUMBER
             # =====================================
 
-            sender_number = (
-                message["from"]
-            )
+            
 
             print("Message:", user_message)
 
