@@ -439,7 +439,7 @@ def handle_whatsapp_message(sender_number, user_message):
 
             "city": None,
 
-             "last_bot_reply": False
+            "last_bot_reply": False
 
         }
 
@@ -448,6 +448,11 @@ def handle_whatsapp_message(sender_number, user_message):
     # =====================================
 
     user_data = users[user_id]
+    # =====================================
+    # RESET BOT LOCK
+    # =====================================
+
+    user_data["last_bot_reply"] = False
 
     # =====================================
     # GREETING WORDS
@@ -590,6 +595,9 @@ def handle_whatsapp_message(sender_number, user_message):
         user_message,
         user_data
     )
+    # STOP IF BROCHURE ALREADY SENT
+    if user_data.get("last_bot_reply"):
+        return
 
     # =====================================
     # EXTRACT BUDGET
@@ -928,41 +936,6 @@ def webhook():
         if "messages" in value:
 
             message = value["messages"][0]
-            # =====================================
-            # USER WHATSAPP NUMBER
-            # =====================================
-
-            sender_number = message["from"]
-
-            # =====================================
-            # UNIQUE MESSAGE ID
-            # =====================================
-
-            message_id = message.get("id")
-
-            # =====================================
-            # CREATE USER MEMORY IF NOT EXISTS
-            # =====================================
-
-            if sender_number not in users:
-
-                users[sender_number] = {}
-
-            # =====================================
-            # PREVENT DUPLICATE REPLIES
-            # =====================================
-
-            if users[sender_number].get("last_message_id") == message_id:
-
-                print("Duplicate message ignored")
-
-                return "duplicate", 200
-
-            # =====================================
-            # SAVE LAST MESSAGE ID
-            # =====================================
-
-            users[sender_number]["last_message_id"] = message_id
 
             # =====================================
             # USER MESSAGE
@@ -976,7 +949,9 @@ def webhook():
             # USER WHATSAPP NUMBER
             # =====================================
 
-            
+            sender_number = (
+                message["from"]
+            )
 
             print("Message:", user_message)
 
