@@ -250,9 +250,6 @@ Your behavior:
 - Use bullet points properly
 - Continue same conversation topic
 - Ask customer name first
-- Then ask customer city
-- Then show categories
-- when conversation end at the time send our sales executive connect with you shortly
 Current Customer Data:
 
 Name: {user_data.get("name")}
@@ -429,7 +426,10 @@ def handle_whatsapp_message(sender_number, user_message):
 
             "name": None,
 
-            "city": None
+            "city": None,
+
+             "last_bot_reply": False
+
         }
 
     # =====================================
@@ -437,6 +437,11 @@ def handle_whatsapp_message(sender_number, user_message):
     # =====================================
 
     user_data = users[user_id]
+    # =====================================
+    # RESET BOT LOCK
+    # =====================================
+
+    user_data["last_bot_reply"] = False
 
     # =====================================
     # GREETING WORDS
@@ -577,11 +582,18 @@ def handle_whatsapp_message(sender_number, user_message):
     # SEND WHATSAPP MESSAGE
     # =====================================
 
-    send_whatsapp_message(
-        sender_number,
-        reply
-    )
+    # =====================================
+# SEND ONLY ONE MESSAGE
+# =====================================
 
+    if not user_data.get("last_bot_reply"):
+
+        send_whatsapp_message(
+            sender_number,
+            reply
+        )
+
+        user_data["last_bot_reply"] = True
     # =====================================
     # SAVE CRM DATA
     # =====================================
@@ -703,11 +715,19 @@ def send_product_brochure(sender_number, user_message, user_data):
                     # SEND PDF TO WHATSAPP
                     # =====================================
 
-                    send_whatsapp_document(
-                        sender_number,
-                        pdf_filename,
-                        "📄 Product Catalogue"
-                    )
+                    # =====================================
+# SEND ONLY IF BOT NOT REPLIED
+# =====================================
+
+                    if not user_data.get("last_bot_reply"):
+
+                        send_whatsapp_document(
+                            sender_number,
+                            pdf_filename,
+                            "📄 Product Catalogue"
+                        )
+
+                        user_data["last_bot_reply"] = True
 
                     # =====================================
                     # SAVE CATALOG STATUS
