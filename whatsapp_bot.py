@@ -447,21 +447,42 @@ def handle_whatsapp_message(sender_number, user_message):
     # GREETING WORDS
     # =====================================
 
-    greetings = ["hi", "hello", "hey", "hii"]
+    greetings = [
+
+        "hi",
+        "hello",
+        "hey",
+        "hii",
+        "heyy",
+        "hy",
+        "yo",
+        "sup",
+        "hola",
+        "helloo",
+        "he'll",
+        "hlw",
+        "namaste"
+    ]
 
     # =====================================
     # SAVE NAME
     # =====================================
 
+    clean_message = user_message.lower().strip()
+
     if (
 
         not user_data.get("name")
 
-        and user_message.lower() not in greetings
+        and clean_message not in greetings
+
+        and len(clean_message.split()) <= 3
+
+        and clean_message.isalpha()
 
     ):
 
-        user_data["name"] = user_message
+        user_data["name"] = user_message.title()
 
     # =====================================
     # SAVE CITY
@@ -472,6 +493,8 @@ def handle_whatsapp_message(sender_number, user_message):
         user_data.get("name")
 
         and not user_data.get("city")
+
+        and clean_message not in greetings
 
     ):
 
