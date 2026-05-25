@@ -851,7 +851,15 @@ def send_whatsapp_document(to, file_path, caption):
         data=data
     )
 
-    media_id = upload_response.json()["id"]
+    response_json = upload_response.json()
+
+    print("UPLOAD RESPONSE:", response_json)
+
+    if "id" not in response_json:
+        print("Media Upload Failed:", response_json)
+        return
+
+    media_id = response_json.get("id")
 
     # =====================================
     # STEP 2 - SEND DOCUMENT
