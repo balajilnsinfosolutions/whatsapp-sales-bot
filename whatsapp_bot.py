@@ -42,7 +42,7 @@ client = Groq(api_key=GROQ_API_KEY)
 # =========================================
 
 users = {}
-processed_messages = {}
+processed_messages = set()
 
 # =========================================
 # FLASK APP
@@ -237,11 +237,6 @@ Available Products Data:
 {product_knowledge}
 
 Your behavior:
--WELCOME_MESSAGE = (
-    "Hello 👋\n"
-    "Welcome to Balaji LNS IT Solutions.\n"
-    "I am Gauri.\n\n"
-    "How can I help you today? 😊")
 - Talk naturally like real WhatsApp sales executive
 - Use emojis naturally
 - Keep replies short
@@ -433,11 +428,14 @@ def handle_whatsapp_message(sender_number, user_message):
             "history": [],
             "category": None,
             "budget": None,
+
             "name": None,
             "city": None,
 
-            "welcome_sent": False,
+            "awaiting_name": True,
+            "awaiting_city": False,
 
+            "welcome_sent": False,
             "last_bot_reply": False
 
         }
