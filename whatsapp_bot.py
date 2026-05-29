@@ -237,6 +237,11 @@ Available Products Data:
 {product_knowledge}
 
 Your behavior:
+-WELCOME_MESSAGE = (
+    "Hello 👋\n"
+    "Welcome to Balaji LNS IT Solutions.\n"
+    "I am Gauri.\n\n"
+    "How can I help you today? 😊")
 - Talk naturally like real WhatsApp sales executive
 - Use emojis naturally
 - Keep replies short
@@ -334,15 +339,10 @@ Budget: {budget}
 # =========================================
 
 WELCOME_MESSAGE = (
-    "Hello 👋\n\n"
-    "Welcome to Balaji LNS IT Solutions.\n\n"
-    "We Deal In:\n\n"
-    "✅ Digital Interactive Boards\n"
-    "✅ PTZ Cameras\n"
-    "✅ Professional Microphones\n"
-    "✅ System / Server PCs\n"
-    "✅ Studio & Podcast Lights\n\n"
-    "May I know your name? 😊"
+    "Hello 👋\n"
+    "Welcome to Balaji LNS IT Solutions.\n"
+    "I am Gauri.\n\n"
+    "How can I help you today? 😊"
 )
 # =========================================
 # SAVE CRM DATA
@@ -374,7 +374,7 @@ def save_to_google_sheet(user_data, sender_number, user_message):
 
             "location": user_data.get("city", ""),
 
-            "requirement": user_data.get("category", ""),
+            "requirement": user_data.get("brand", ""),
 
             "size": user_data.get("size", ""),
 
@@ -431,16 +431,15 @@ def handle_whatsapp_message(sender_number, user_message):
         users[user_id] = {
 
             "history": [],
+
             "category": None,
+
             "budget": None,
 
             "name": None,
+
             "city": None,
 
-            "awaiting_name": False,
-            "awaiting_city": False,
-
-            "welcome_sent": False,
             "last_bot_reply": False
 
         }
@@ -454,7 +453,7 @@ def handle_whatsapp_message(sender_number, user_message):
     # RESET BOT LOCK
     # =====================================
 
-
+    user_data["last_bot_reply"] = False
 
     # =====================================
     # GREETING WORDS
@@ -476,153 +475,43 @@ def handle_whatsapp_message(sender_number, user_message):
         "hlw",
         "namaste"
     ]
-    # =====================================
-    # DIRECT PRODUCT DETECTION
-    # =====================================
 
-    category = detect_category(user_message)
-
-    if category and not user_data.get("name"):
-
-        user_data["category"] = category
-
-        send_whatsapp_message(
-            sender_number,
-            "Great 😊\n\nMay I know your name?"
-        )
-
-        return
     # =====================================
     # SAVE NAME
     # =====================================
 
     clean_message = user_message.lower().strip()
-    invalid_names = [
 
-    "hi","hello","hey","hii","heyy",
-    "hy","helln","hellnn","helo","hlo",
+    if (
 
-    "digital board",
-    "helloo",
-    "hellooo",
-    "hiii",
-    "hiiii",
-    "ok",
-    "okay",
-    "yes",
-    "no",
-    "test",
-    "digital boards",
-    "ptz camera",
-    "camera",
-    "mic",
-    "microphone",
-    "server",
-    "pc",
-    "light",
+        not user_data.get("name")
 
-    "lg",
-    "samsung",
-    "dell",
-    "maxhub",
-    "techhubx",
-    "teachmint"
-]
+        and clean_message not in greetings
 
-    if clean_message in greetings:
+        and len(clean_message.split()) <= 3
 
-        if not user_data.get("welcome_sent"):
+        and clean_message.isalpha()
 
-            send_whatsapp_message(
-                sender_number,
-                WELCOME_MESSAGE
-            )
+    ):
 
-            user_data["welcome_sent"] = True
+        user_data["name"] = user_message.title()
 
-        return
-# =====================================
-# SAVE NAME
-# =====================================
-
-    if user_data.get("awaiting_name"):
-
-        if clean_message not in invalid_names:
-
-            user_data["name"] = user_message.title()
-
-            user_data["awaiting_name"] = False
-            user_data["awaiting_city"] = True
-
-            send_whatsapp_message(
-                sender_number,
-                f"Nice to meet you {user_data['name']} 😊\n\nWhich city are you from?"
-            )
-
-            return
-
-        else:
-
-            send_whatsapp_message(
-                sender_number,
-                "😊 Please enter your name."
-            )
-
-            return
     # =====================================
     # SAVE CITY
     # =====================================
-    invalid_cities = [
 
-        "hi","hello","hey","hii","heyy",
-        "hy","helln","hellnn","helo","hlo",
+    elif (
 
-        "digital board",
-        "digital boards",
-        "ptz camera",
-        "camera",
-        "mic",
-        "microphone",
-        "server",
-        "pc",
-        "light",
+        user_data.get("name")
 
-        "lg",
-        "samsung",
-        "dell",
-        "maxhub",
-        "techhubx",
-        "teachmint",
+        and not user_data.get("city")
 
-        "55","65","75","86","98",
+        and clean_message not in greetings
 
-        "yes",
-        "no",
-        "ok",
-        "okay",
-        "test"
-    ]
-    if user_data.get("awaiting_city"):
+    ):
 
-        if clean_message in invalid_cities:
+        user_data["city"] = user_message
 
-            send_whatsapp_message(
-                sender_number,
-                "😊 Please enter your city name."
-            )
-
-            return
-
-        user_data["city"] = user_message.title()
-
-        user_data["awaiting_city"] = False
-
-        send_whatsapp_message(
-            sender_number,
-            "Thank you 😊\n\nWhich product are you interested in?\n\n1️⃣ Digital Board\n2️⃣ PTZ Camera\n3️⃣ Microphone\n4️⃣ Server / PC\n5️⃣ Light"
-        )
-
-        return
     # =====================================
     # DETECT CATEGORY
     # =====================================
@@ -859,25 +748,24 @@ def send_product_brochure(sender_number, user_message, user_data):
                     with open(pdf_filename, "wb") as f:
 
                         f.write(pdf_response.content)
-                    send_whatsapp_document(
-                        sender_number,
-                        pdf_filename,
-                        f"{row['Brand Name']} Brochure"
-                    )
-
-                    user_data["catalog_sent"] = True
-                    user_data["last_bot_reply"] = True
 
                     # =====================================
                     # SEND PDF TO WHATSAPP
                     # =====================================
 
                     # =====================================
-                    # SEND ONLY IF BOT NOT REPLIED
-                    # =====================================
+# SEND ONLY IF BOT NOT REPLIED
+# =====================================
 
-                    if user_data.get("last_bot_reply"):
-                        return
+                    if not user_data.get("last_bot_reply"):
+
+                        send_whatsapp_document(
+                            sender_number,
+                            pdf_filename,
+                            "📄 Product Catalogue"
+                        )
+
+                        user_data["last_bot_reply"] = True
 
                     # =====================================
                     # SAVE CATALOG STATUS
@@ -1057,13 +945,7 @@ def webhook():
         if "messages" in value:
 
             message = value["messages"][0]
-            message_id = message["id"]
 
-            if message_id in processed_messages:
-                print("Duplicate Message Ignored:", message_id)
-                return "ok", 200
-
-            processed_messages.add(message_id)
             # =====================================
             # USER MESSAGE
             # =====================================
@@ -1079,11 +961,6 @@ def webhook():
             sender_number = (
                 message["from"]
             )
-            print("================================")
-            print("MESSAGE ID:", message_id)
-            print("USER:", sender_number)
-            print("TEXT:", user_message)
-            print("================================")
 
             print("Message:", user_message)
 
@@ -1119,7 +996,7 @@ def main():
 
         port=5000,
 
-        debug=False
+        debug=True
     )
 
 
