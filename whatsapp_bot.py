@@ -242,11 +242,12 @@ Your behavior:
             "Welcome to Balaji LNS IT Solutions.\n\n"
             "We deal in:\n\n"
             "📺 Interactive Flat Panels\n"
-            "📢 Digital Signage Boards\n"
-            "🎥 PTZ Cameras\n"
-            "💻 PC & Computer Setup\n"
+            "📢 Digital Smart Boards\n"
+            "🎥 PTZ Cameras & Sony Cameras\n"
+            "💻 PC & server Setup \n"
+            "💻 MacBook & Mac Mini\n"
             "🎙 Podcast Studio Setup\n"
-            "🎤 Microphones\n"
+            "🎤 Microphones & Mics\n"
             "💡 Lights & Accessories\n\n"
             "Which product are you looking for today? 😊")
 - Talk naturally like real WhatsApp sales executive
