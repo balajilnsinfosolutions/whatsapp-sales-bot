@@ -43,7 +43,7 @@ client = Groq(api_key=GROQ_API_KEY)
 
 users = {}
 processed_messages = set()
-
+MAX_IDS = 1000
 # =========================================
 # FLASK APP
 # =========================================
@@ -946,21 +946,22 @@ def webhook():
 
             message = value["messages"][0]
 
-            # =====================================
-            # USER MESSAGE
-            # =====================================
+            # UNIQUE MESSAGE ID
+            message_id = message["id"]
+           
+            
+            # DUPLICATE CHECK
+            if message_id in processed_messages:
+                print("Duplicate Message Ignored")
+                return "ok", 200
 
-            user_message = (
-                message["text"]["body"]
-            )
+            processed_messages.add(message_id)
+            if len(processed_messages) > 1000:
+                processed_messages.clear()
 
-            # =====================================
-            # USER WHATSAPP NUMBER
-            # =====================================
+            user_message = message["text"]["body"]
 
-            sender_number = (
-                message["from"]
-            )
+            sender_number = message["from"]
 
             print("Message:", user_message)
 
