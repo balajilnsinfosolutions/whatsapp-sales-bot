@@ -374,7 +374,7 @@ def save_to_google_sheet(user_data, sender_number, user_message):
 
             "location": user_data.get("city", ""),
 
-            "requirement": user_data.get("brand", ""),
+            "requirement": user_data.get("category", ""),
 
             "size": user_data.get("size", ""),
 
@@ -437,7 +437,7 @@ def handle_whatsapp_message(sender_number, user_message):
             "name": None,
             "city": None,
 
-            "awaiting_name": True,
+            "awaiting_name": False,
             "awaiting_city": False,
 
             "welcome_sent": False,
