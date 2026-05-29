@@ -486,57 +486,42 @@ def handle_whatsapp_message(sender_number, user_message):
         "namaste"
     ]
 
+    # =====================================
+    # SAVE NAME
+    # =====================================
+
     clean_message = user_message.lower().strip()
 
-    # FIRST ASK NAME
+    if (
 
-    if clean_message in [g.lower() for g in greetings]:
+        not user_data.get("name")
 
-        if not user_data.get("name"):
+        and clean_message not in greetings
 
-            send_whatsapp_message(
-                sender_number,
-                "😊 May I know your name?"
-            )
+        and len(clean_message.split()) <= 3
 
-            return
+        and clean_message.isalpha()
 
-    # SAVE NAME
-
-    if not user_data.get("name"):
+    ):
 
         user_data["name"] = user_message.title()
 
-        send_whatsapp_message(
-            sender_number,
-            "📍 Please share your city/location."
-        )
-
-        return
-
+    # =====================================
     # SAVE CITY
+    # =====================================
 
-    if user_data.get("name") and not user_data.get("city"):
+    elif (
+
+        user_data.get("name")
+
+        and not user_data.get("city")
+
+        and clean_message not in greetings
+
+    ):
 
         user_data["city"] = user_message
 
-        send_whatsapp_message(
-            sender_number,
-            """Thank you 😊
-
-    Which product are you looking for today?
-
-    📺 Interactive Flat Panels
-    📢 Digital Smart Boards
-    🎥 PTZ Cameras
-    💻 MacBook & Mac Mini
-    🎙 Podcast Studio Setup
-    🎤 Microphones & Mics
-    💡 Lights & Accessories
-    """
-        )
-
-        return
     # =====================================
     # DETECT CATEGORY
     # =====================================
