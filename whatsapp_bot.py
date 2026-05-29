@@ -525,7 +525,7 @@ def handle_whatsapp_message(sender_number, user_message):
 
             user_data["welcome_sent"] = True
 
-            return
+        return
 # =====================================
 # SAVE NAME
 # =====================================
@@ -557,19 +557,57 @@ def handle_whatsapp_message(sender_number, user_message):
     # =====================================
     # SAVE CITY
     # =====================================
+    invalid_cities = [
 
-    if (
+        "hi","hello","hey","hii","heyy",
+        "hy","helln","hellnn","helo","hlo",
 
-        user_data.get("name")
+        "digital board",
+        "digital boards",
+        "ptz camera",
+        "camera",
+        "mic",
+        "microphone",
+        "server",
+        "pc",
+        "light",
 
-        and not user_data.get("city")
+        "lg",
+        "samsung",
+        "dell",
+        "maxhub",
+        "techhubx",
+        "teachmint",
 
-        and clean_message not in greetings
+        "55","65","75","86","98",
 
-    ):
+        "yes",
+        "no",
+        "ok",
+        "okay",
+        "test"
+    ]
+    if user_data.get("awaiting_city"):
 
-        user_data["city"] = user_message
+        if clean_message in invalid_cities:
 
+            send_whatsapp_message(
+                sender_number,
+                "😊 Please enter your city name."
+            )
+
+            return
+
+        user_data["city"] = user_message.title()
+
+        user_data["awaiting_city"] = False
+
+        send_whatsapp_message(
+            sender_number,
+            "Thank you 😊\n\nWhich product are you interested in?\n\n1️⃣ Digital Board\n2️⃣ PTZ Camera\n3️⃣ Microphone\n4️⃣ Server / PC\n5️⃣ Light"
+        )
+
+        return
     # =====================================
     # DETECT CATEGORY
     # =====================================
@@ -812,18 +850,11 @@ def send_product_brochure(sender_number, user_message, user_data):
                     # =====================================
 
                     # =====================================
-# SEND ONLY IF BOT NOT REPLIED
-# =====================================
+                    # SEND ONLY IF BOT NOT REPLIED
+                    # =====================================
 
-                    if not user_data.get("last_bot_reply"):
-
-                        send_whatsapp_document(
-                            sender_number,
-                            pdf_filename,
-                            "📄 Product Catalogue"
-                        )
-
-                        user_data["last_bot_reply"] = True
+                    if user_data.get("last_bot_reply"):
+                        return
 
                     # =====================================
                     # SAVE CATALOG STATUS
