@@ -334,10 +334,15 @@ Budget: {budget}
 # =========================================
 
 WELCOME_MESSAGE = (
-    "Hello 👋\n"
-    "Welcome to Balaji LNS IT Solutions.\n"
-    "I am Gauri.\n\n"
-    "How can I help you today? 😊"
+    "Hello 👋\n\n"
+    "Welcome to Balaji LNS IT Solutions.\n\n"
+    "We Deal In:\n\n"
+    "✅ Digital Interactive Boards\n"
+    "✅ PTZ Cameras\n"
+    "✅ Professional Microphones\n"
+    "✅ System / Server PCs\n"
+    "✅ Studio & Podcast Lights\n\n"
+    "May I know your name? 😊"
 )
 # =========================================
 # SAVE CRM DATA
@@ -477,26 +482,83 @@ def handle_whatsapp_message(sender_number, user_message):
     # =====================================
 
     clean_message = user_message.lower().strip()
+    invalid_names = [
 
-    if (
+    "hi","hello","hey","hii","heyy",
+    "hy","helln","hellnn","helo","hlo",
 
-        not user_data.get("name")
+    "digital board",
+    "helloo",
+    "hellooo",
+    "hiii",
+    "hiiii",
+    "ok",
+    "okay",
+    "yes",
+    "no",
+    "test",
+    "digital boards",
+    "ptz camera",
+    "camera",
+    "mic",
+    "microphone",
+    "server",
+    "pc",
+    "light",
 
-        and clean_message not in greetings
+    "lg",
+    "samsung",
+    "dell",
+    "maxhub",
+    "techhubx",
+    "teachmint"
+]
 
-        and len(clean_message.split()) <= 3
+    if clean_message in greetings:
 
-        and clean_message.isalpha()
+        if not user_data.get("welcome_sent"):
 
-    ):
+            send_whatsapp_message(
+                sender_number,
+                WELCOME_MESSAGE
+            )
 
-        user_data["name"] = user_message.title()
+            user_data["welcome_sent"] = True
 
+            return
+# =====================================
+# SAVE NAME
+# =====================================
+
+    if user_data.get("awaiting_name"):
+
+        if clean_message not in invalid_names:
+
+            user_data["name"] = user_message.title()
+
+            user_data["awaiting_name"] = False
+            user_data["awaiting_city"] = True
+
+            send_whatsapp_message(
+                sender_number,
+                f"Nice to meet you {user_data['name']} 😊\n\nWhich city are you from?"
+            )
+
+            return
+
+        else:
+
+            send_whatsapp_message(
+                sender_number,
+                "😊 Please enter your name."
+            )
+
+            return
     # =====================================
     # SAVE CITY
     # =====================================
 
-    elif (
+    if (
 
         user_data.get("name")
 
