@@ -440,14 +440,15 @@ def handle_whatsapp_message(sender_number, user_message):
         users[user_id] = {
 
             "history": [],
-
+            "name": None,
+            "city": None,
             "category": None,
 
             "budget": None,
 
-            "name": None,
+            
 
-            "city": None,
+            
 
             "last_bot_reply": False
 
