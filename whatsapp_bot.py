@@ -484,41 +484,41 @@ def handle_whatsapp_message(sender_number, user_message):
         "namaste"
     ]
 
-    # # =====================================
-    # # SAVE NAME
-    # # =====================================
+    # =====================================
+    # SAVE NAME
+    # =====================================
 
-    # clean_message = user_message.lower().strip()
+    clean_message = user_message.lower().strip()
 
-    # if (
+    if (
 
-    #     not user_data.get("name")
+        not user_data.get("name")
 
-    #     and clean_message not in greetings
+        and clean_message not in greetings
 
-    #     and len(clean_message.split()) <= 3
+        and len(clean_message.split()) <= 3
 
-    #     and clean_message.isalpha()
+        and clean_message.isalpha()
 
-    # ):
+    ):
 
-    #     user_data["name"] = user_message.title()
+        user_data["name"] = user_message.title()
 
-    # # =====================================
-    # # SAVE CITY
-    # # =====================================
+    # =====================================
+    # SAVE CITY
+    # =====================================
 
-    # elif (
+    elif (
 
-    #     user_data.get("name")
+        user_data.get("name")
 
-    #     and not user_data.get("city")
+        and not user_data.get("city")
 
-    #     and clean_message not in greetings
+        and clean_message not in greetings
 
-    # ):
+    ):
 
-    #     user_data["city"] = user_message
+        user_data["city"] = user_message
 
     # =====================================
     # DETECT CATEGORY
@@ -569,7 +569,7 @@ def handle_whatsapp_message(sender_number, user_message):
 
             n=1,
 
-            cutoff=0.85
+            cutoff=0.6
         )
 
         if matched_brand:
@@ -596,11 +596,7 @@ def handle_whatsapp_message(sender_number, user_message):
         user_data["size"] = size_match.group(1)
     # ASK NAME AFTER PRODUCT INTEREST
 
-    if (
-        user_data.get("brand")
-        and not user_data.get("name")
-        and not user_data.get("name_asked")
-    ):
+    if user_data.get("brand") and not user_data.get("name"):
 
         send_whatsapp_message(
             sender_number,
@@ -615,9 +611,7 @@ def handle_whatsapp_message(sender_number, user_message):
 
     if user_data.get("name_asked") and not user_data.get("name"):
 
-        user_data["name"] = user_message.strip()
-
-        user_data["name_asked"] = False
+        user_data["name"] = user_message
 
         send_whatsapp_message(
             sender_number,
