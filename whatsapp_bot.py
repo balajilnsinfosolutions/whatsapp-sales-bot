@@ -440,15 +440,17 @@ def handle_whatsapp_message(sender_number, user_message):
         users[user_id] = {
 
             "history": [],
+
             "category": None,
+
             "budget": None,
+
             "name": None,
+
             "city": None,
 
-            "name_asked": False,
-            "location_asked": False,
-
             "last_bot_reply": False
+
         }
 
     # =====================================
@@ -594,46 +596,6 @@ def handle_whatsapp_message(sender_number, user_message):
     if size_match:
 
         user_data["size"] = size_match.group(1)
-    # ASK NAME AFTER PRODUCT INTEREST
-
-    if user_data.get("brand") and not user_data.get("name"):
-
-        send_whatsapp_message(
-            sender_number,
-            "😊 May I know your name?"
-        )
-
-        user_data["name_asked"] = True
-        return
-
-
-    # SAVE NAME
-
-    if user_data.get("name_asked") and not user_data.get("name"):
-
-        user_data["name"] = user_message
-
-        send_whatsapp_message(
-            sender_number,
-            "📍 Please share your city/location."
-        )
-
-        user_data["location_asked"] = True
-        return
-
-
-    # SAVE LOCATION
-
-    if user_data.get("location_asked") and not user_data.get("city"):
-
-        user_data["city"] = user_message
-
-        send_whatsapp_message(
-            sender_number,
-            f"Thank you {user_data['name']} 😊"
-        )
-
-        return
 
     # =========================================
     # SEND PRODUCT BROCHURE
