@@ -476,7 +476,22 @@ def handle_whatsapp_message(sender_number, user_message):
         "hlw",
         "namaste"
     ]
+    # =====================================
+    # DIRECT PRODUCT DETECTION
+    # =====================================
 
+    category = detect_category(user_message)
+
+    if category and not user_data.get("name"):
+
+        user_data["category"] = category
+
+        send_whatsapp_message(
+            sender_number,
+            "Great 😊\n\nMay I know your name?"
+        )
+
+        return
     # =====================================
     # SAVE NAME
     # =====================================
@@ -844,6 +859,14 @@ def send_product_brochure(sender_number, user_message, user_data):
                     with open(pdf_filename, "wb") as f:
 
                         f.write(pdf_response.content)
+                    send_whatsapp_document(
+                        sender_number,
+                        pdf_filename,
+                        f"{row['Brand Name']} Brochure"
+                    )
+
+                    user_data["catalog_sent"] = True
+                    user_data["last_bot_reply"] = True
 
                     # =====================================
                     # SEND PDF TO WHATSAPP
