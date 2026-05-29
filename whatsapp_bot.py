@@ -440,17 +440,15 @@ def handle_whatsapp_message(sender_number, user_message):
         users[user_id] = {
 
             "history": [],
-
             "category": None,
-
             "budget": None,
-
             "name": None,
-
             "city": None,
 
-            "last_bot_reply": False
+            "name_asked": False,
+            "location_asked": False,
 
+            "last_bot_reply": False
         }
 
     # =====================================
@@ -486,41 +484,41 @@ def handle_whatsapp_message(sender_number, user_message):
         "namaste"
     ]
 
-    # =====================================
-    # SAVE NAME
-    # =====================================
+    # # =====================================
+    # # SAVE NAME
+    # # =====================================
 
-    clean_message = user_message.lower().strip()
+    # clean_message = user_message.lower().strip()
 
-    if (
+    # if (
 
-        not user_data.get("name")
+    #     not user_data.get("name")
 
-        and clean_message not in greetings
+    #     and clean_message not in greetings
 
-        and len(clean_message.split()) <= 3
+    #     and len(clean_message.split()) <= 3
 
-        and clean_message.isalpha()
+    #     and clean_message.isalpha()
 
-    ):
+    # ):
 
-        user_data["name"] = user_message.title()
+    #     user_data["name"] = user_message.title()
 
-    # =====================================
-    # SAVE CITY
-    # =====================================
+    # # =====================================
+    # # SAVE CITY
+    # # =====================================
 
-    elif (
+    # elif (
 
-        user_data.get("name")
+    #     user_data.get("name")
 
-        and not user_data.get("city")
+    #     and not user_data.get("city")
 
-        and clean_message not in greetings
+    #     and clean_message not in greetings
 
-    ):
+    # ):
 
-        user_data["city"] = user_message
+    #     user_data["city"] = user_message
 
     # =====================================
     # DETECT CATEGORY
@@ -596,6 +594,46 @@ def handle_whatsapp_message(sender_number, user_message):
     if size_match:
 
         user_data["size"] = size_match.group(1)
+    # ASK NAME AFTER PRODUCT INTEREST
+
+    if user_data.get("brand") and not user_data.get("name"):
+
+        send_whatsapp_message(
+            sender_number,
+            "😊 May I know your name?"
+        )
+
+        user_data["name_asked"] = True
+        return
+
+
+    # SAVE NAME
+
+    if user_data.get("name_asked") and not user_data.get("name"):
+
+        user_data["name"] = user_message
+
+        send_whatsapp_message(
+            sender_number,
+            "📍 Please share your city/location."
+        )
+
+        user_data["location_asked"] = True
+        return
+
+
+    # SAVE LOCATION
+
+    if user_data.get("location_asked") and not user_data.get("city"):
+
+        user_data["city"] = user_message
+
+        send_whatsapp_message(
+            sender_number,
+            f"Thank you {user_data['name']} 😊"
+        )
+
+        return
 
     # =========================================
     # SEND PRODUCT BROCHURE
