@@ -42,6 +42,7 @@ client = Groq(api_key=GROQ_API_KEY)
 # =========================================
 
 users = {}
+processed_messages = {}
 
 # =========================================
 # FLASK APP
@@ -430,14 +431,12 @@ def handle_whatsapp_message(sender_number, user_message):
         users[user_id] = {
 
             "history": [],
-
             "category": None,
-
             "budget": None,
-
             "name": None,
-
             "city": None,
+
+            "welcome_sent": False,
 
             "last_bot_reply": False
 
@@ -452,7 +451,7 @@ def handle_whatsapp_message(sender_number, user_message):
     # RESET BOT LOCK
     # =====================================
 
-    user_data["last_bot_reply"] = False
+
 
     # =====================================
     # GREETING WORDS
@@ -944,7 +943,13 @@ def webhook():
         if "messages" in value:
 
             message = value["messages"][0]
+            message_id = message["id"]
 
+            if message_id in processed_messages:
+                print("Duplicate Message Ignored:", message_id)
+                return "ok", 200
+
+            processed_messages.add(message_id)
             # =====================================
             # USER MESSAGE
             # =====================================
@@ -960,6 +965,11 @@ def webhook():
             sender_number = (
                 message["from"]
             )
+            print("================================")
+            print("MESSAGE ID:", message_id)
+            print("USER:", sender_number)
+            print("TEXT:", user_message)
+            print("================================")
 
             print("Message:", user_message)
 
@@ -995,7 +1005,7 @@ def main():
 
         port=5000,
 
-        debug=True
+        debug=False
     )
 
 
