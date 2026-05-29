@@ -569,7 +569,7 @@ def handle_whatsapp_message(sender_number, user_message):
 
             n=1,
 
-            cutoff=0.6
+            cutoff=0.85
         )
 
         if matched_brand:
@@ -596,7 +596,11 @@ def handle_whatsapp_message(sender_number, user_message):
         user_data["size"] = size_match.group(1)
     # ASK NAME AFTER PRODUCT INTEREST
 
-    if user_data.get("brand") and not user_data.get("name"):
+    if (
+        user_data.get("brand")
+        and not user_data.get("name")
+        and not user_data.get("name_asked")
+    ):
 
         send_whatsapp_message(
             sender_number,
@@ -611,7 +615,9 @@ def handle_whatsapp_message(sender_number, user_message):
 
     if user_data.get("name_asked") and not user_data.get("name"):
 
-        user_data["name"] = user_message
+        user_data["name"] = user_message.strip()
+
+        user_data["name_asked"] = False
 
         send_whatsapp_message(
             sender_number,
