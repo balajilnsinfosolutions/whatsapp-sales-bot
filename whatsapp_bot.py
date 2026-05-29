@@ -707,6 +707,13 @@ def send_product_brochure(sender_number, user_message, user_data):
                     # =====================================
 
                     pdf_response = requests.get(download_url)
+                    print("Content Type:", pdf_response.headers.get("Content-Type"))
+
+                    if "pdf" not in str(pdf_response.headers.get("Content-Type", "")).lower():
+                        print("Invalid PDF URL")
+                        print(download_url)
+                        return
+                    
 
                     # =====================================
                     # CREATE FILE NAME
@@ -845,7 +852,15 @@ def send_whatsapp_document(to, file_path, caption):
     headers = {
         "Authorization": f"Bearer {WHATSAPP_TOKEN}"
     }
+    import os
 
+    print("Sending File:", file_path)
+
+    if not os.path.exists(file_path):
+        print("File Not Found:", file_path)
+        return
+
+    print("File Size:", os.path.getsize(file_path))
     files = {
         "file": open(file_path, "rb")
     }
