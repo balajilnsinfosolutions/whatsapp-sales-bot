@@ -461,7 +461,7 @@ def handle_whatsapp_message(sender_number, user_message):
     # RESET BOT LOCK
     # =====================================
 
-    # user_data["last_bot_reply"] = False
+    user_data["last_bot_reply"] = False
 
     # =====================================
     # GREETING WORDS
